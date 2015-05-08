@@ -39,10 +39,41 @@ function comp.getTurbines()
 
 end
 
+local cells = comp.getComponent("tile_thermalexpansion_cell_resonant_name")
+local cellsLength = tableLength(cells)
+local lastEnergy = 0
+local currentEnergies = {}
+local outputEnergies = {}
+local lastEnergies = {}
+local finalEnergies = {}
+local out2 = {}
+local cellNumber = 0
+
+for i=1, cellsLength do
+  currentEnergies[i] = 0
+  outputEnergies[i] = 0
+  lastEnergies[i] = 0
+  finalEnergies[i] = 0
+end
+
+function comp.getEnergyGains(n, accuracy)
+  local CALIBRATION_OFFSET = n
+  local ACCURACY = accuracy
+    for i=1, cellsLength do
+
+        currentEnergies[i] = component.proxy(cells[i]).getEnergyStored()
+        outputEnergies[i] = (currentEnergies[i] - lastEnergies[i])/(20/cellsLength+cellsLength/4)
+        lastEnergies[i] = currentEnergies[i]
+        finalEnergies[i] = comp.round(outputEnergies[i] - (outputEnergies[i]/CALIBRATION_OFFSET),ACCURACY)
+        out2[i] = finalEnergies[i]/cellsLength
+
+    end
+return out2
+end
+
 function comp.toTurbine(t,n)
 
-  turbine = component.proxy(t[n])
-  return turbine
+  return component.proxy(t[n])
 
 end
 
