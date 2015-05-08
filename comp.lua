@@ -16,6 +16,11 @@ end
 b = {}
 slot = 1
 
+function comp.round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
+
 function comp.getComponent(s)
   local f = component.list(tostring(s))
   local b = {}
@@ -23,7 +28,6 @@ function comp.getComponent(s)
   for k in f do table.insert(b, slotB, tostring(k)) slotB = slotB + 1 end
   return b
 end
-
 
 function comp.getTurbines()
 
