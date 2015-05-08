@@ -21,7 +21,7 @@ function comp.getComponent(s)
   local b = {}
   local slotB = 1
   for k in f do table.insert(b, slotB, tostring(k)) slotB = slotB + 1 end
-  return f
+  return b
 end
 
 
