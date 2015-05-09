@@ -1,8 +1,12 @@
 local component = require("component")
 local term = require("term")
 local event = require("event")
+local computer = require("computer")
 
 local comp = {}
+
+local tempBool1 = false
+local tempBool2 = false
 
 component.modem.open(123)
 tarRPM = 0
@@ -39,33 +43,49 @@ function comp.getTurbines()
 
 end
 
-local cells = comp.getComponent("tile_thermalexpansion_cell_resonant_name")
-local cellsLength = tableLength(cells)
 local lastEnergy = 0
 local currentEnergies = {}
 local outputEnergies = {}
 local lastEnergies = {}
 local finalEnergies = {}
-local out2 = {}
 local cellNumber = 0
-
-for i=1, cellsLength do
-  currentEnergies[i] = 0
-  outputEnergies[i] = 0
-  lastEnergies[i] = 0
-  finalEnergies[i] = 0
-end
+local lastTimes = {}
+local deltaTimes = {}
 
 function comp.getEnergyGains(n, accuracy)
   local CALIBRATION_OFFSET = n
   local ACCURACY = accuracy
+
+  if tempBool1==false then
+
+    out2 = {}
+    cells = comp.getComponent("tile_thermalexpansion_cell_resonant_name")
+    cellsLength = tableLength(cells)
+
     for i=1, cellsLength do
+      lastTimes[i] = computer.uptime()
+      deltaTimes[i] = 0
+      currentEnergies[i] = 0
+      outputEnergies[i] = 0
+      lastEnergies[i] = 0
+      finalEnergies[i] = 0
+      out2[i] = 0
+    end
+
+    tempBool1 = true
+
+  end
+
+    for i=1, cellsLength do
+      deltaTimes[i] = computer.uptime() - lastTimes[i]
+      lastTimes[i] = computer.uptime()
 
         currentEnergies[i] = component.proxy(cells[i]).getEnergyStored()
-        outputEnergies[i] = (currentEnergies[i] - lastEnergies[i])/(20/cellsLength+cellsLength/4)
+        outputEnergies[i] = (currentEnergies[i] - lastEnergies[i])/(20*deltaTimes[i])
+
         lastEnergies[i] = currentEnergies[i]
-        finalEnergies[i] = comp.round(outputEnergies[i] - (outputEnergies[i]/CALIBRATION_OFFSET),ACCURACY)
-        out2[i] = finalEnergies[i]/cellsLength
+        finalEnergies[i] = comp.round(outputEnergies[i],ACCURACY)
+        out2[i] = finalEnergies[i]
 
     end
 return out2
@@ -107,30 +127,36 @@ end
 
 event.listen("modem_message", setTarRPM)
 
-turbines = comp.getTurbines()
-c = tableLength(turbines)
+
 curErrors = {}
 dErrs = {}
 errors = {}
 errSums = {}
-lastError = 0
 proErrors = {}
 out = {}
-dErr = 0
 curFlowDev = {}
-lastError = 0
-
-for i=1, c do
-	curErrors[i] = 0
-	out[i] = 0
-	dErrs[i] = 0
-	errors[i] = 0
-	errSums[i] = 0
-	proErrors[i] = 0
-	curFlowDev[i] = 0
-end
 
 function comp.turbinePID()
+
+  if tempBool2==false then
+
+    turbines = comp.getTurbines()
+    c = tableLength(turbines)
+
+    for i=1, c do
+    	curErrors[i] = 0
+    	out[i] = 0
+    	dErrs[i] = 0
+    	errors[i] = 0
+    	errSums[i] = 0
+    	proErrors[i] = 0
+    	curFlowDev[i] = 0
+    end
+
+    tempBool2 = true
+
+  end
+
 
 	for i=1, c do
 
@@ -156,6 +182,11 @@ function comp.turbinePID()
 
 	return out
 
+end
+
+function comp.cleanUp()
+  tempBool1 = false
+  tempBool2 = false
 end
 
 return comp
