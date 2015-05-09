@@ -52,9 +52,8 @@ local cellNumber = 0
 local lastTimes = {}
 local deltaTimes = {}
 
-function comp.getEnergyGains(n, accuracy)
-  local CALIBRATION_OFFSET = n
-  local ACCURACY = accuracy
+function comp.getEnergyGains()
+  local ACCURACY = 0
 
   if tempBool1==false then
 
