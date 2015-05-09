@@ -50,8 +50,8 @@ function API.screen()
   end
 end
 
-function API.toggleButton(name, bool)
-  if bool==true then API.checkOtherButtons() end
+function API.toggleButton(name, table)
+  if table~=nil then API.checkOtherButtons(table) end
   button[name]["active"] = not button[name]["active"]
   buttonStatus = button[name]["active"]
   API.screen()
@@ -89,10 +89,10 @@ function API.label(w, h, text)
   term.write(text)
 end
 
-function API.checkOtherButtons()
-  for name, data in pairs(button) do
-    if button[name]["active"] == true then
-      button[name]["active"] = false
+function API.checkOtherButtons(table)
+  for k, v in pairs(table) do
+    if button[v]["active"] == true then
+      button[v]["active"] = false
     end
   end
 end
