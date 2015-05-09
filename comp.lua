@@ -66,7 +66,7 @@ function comp.getEnergyGains()
       deltaTimes[i] = 0
       currentEnergies[i] = 0
       outputEnergies[i] = 0
-      lastEnergies[i] = 0
+      lastEnergies[i] = component.proxy(cells[i]).getEnergyStored()
       finalEnergies[i] = 0
       out2[i] = 0
     end
