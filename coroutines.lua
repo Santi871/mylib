@@ -10,30 +10,30 @@ local serialization = require("serialization")
 
 turbine = coroutine.create(function()
 
-while true do
+  while true do
 
-t = comp.getTurbines()
+    t = comp.getTurbines()
 
-comp.enableAllTurbines(t)
+    comp.enableAllTurbines(t)
 
-tableFlow = comp.turbinePID()
+    tableFlow = comp.turbinePID()
 
-c = tableLength(t)
+    c = tableLength(t)
 
-for k,v in pairs(t) do
+    for k,v in pairs(t) do
 
-comp.toTurbine(t, k).setFluidFlowRateMax(tableFlow[k])
+      comp.toTurbine(t, k).setFluidFlowRateMax(tableFlow[k])
 
-end
+    end
 
 
-if keyboard.isControlDown() then comp.cleanUp() term.clear() os.exit() end
+    if keyboard.isControlDown() then comp.cleanUp() term.clear() os.exit() end
 
-os.sleep(0.5)
+    os.sleep(0.5)
 
-coroutine.yield()
+    coroutine.yield()
 
-end
+  end
 
 end
 
@@ -41,25 +41,25 @@ end
 
 cell = coroutine.create(function()
 
-while true do
+  while true do
 
- results = comp.getEnergyGains()
+    results = comp.getEnergyGains()
 
- gpu.fill(1,1,999,999," ")
+    gpu.fill(1,1,999,999," ")
 
- c = tableLength(results)
+    c = tableLength(results)
 
- if keyboard.isControlDown() then  comp.cleanUp() term.clear() os.exit() end
+    if keyboard.isControlDown() then  comp.cleanUp() term.clear() os.exit() end
 
-packet = serialization.serialize(results)
+    packet = serialization.serialize(results)
 
-modem.broadcast(124, packet)
+    modem.broadcast(124, packet)
 
-os.sleep(1)
+    os.sleep(1)
 
-coroutine.yield()
+    coroutine.yield()
 
-end
+  end
 
 end
 
@@ -67,8 +67,8 @@ end
 
 while true do
 
-coroutine.resume(turbine)
-coroutine.resume(cell)
-if keyboard.isControlDown() then os.exit() end
+  coroutine.resume(turbine)
+  coroutine.resume(cell)
+  if keyboard.isControlDown() then os.exit() end
 
 end
