@@ -8,12 +8,6 @@ local comp = require("comp")
 local modem = component.modem
 local serialization = require("serialization") 
 
-
-local function round(num, idp)
-  local mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
-end
-
 turbine = coroutine.create(function()
 
 while true do
@@ -38,35 +32,35 @@ if keyboard.isControlDown() then comp.cleanUp() term.clear() os.exit() end
 os.sleep(0.5)
 
 coroutine.yield()
- 
-end 
+
+end
 
 end
 
 )
 
-cell = coroutine.create(function() 
+cell = coroutine.create(function()
 
 while true do
- 
+
  results = comp.getEnergyGains()
- 
+
  gpu.fill(1,1,999,999," ")
- 
+
  c = tableLength(results)
- 
+
 --for i=1,c do
- 
+
  --gpu.set(1,i,"Energy gain "..i..": "..results[i].." RF/t")
- 
+
 --end
- 
+
  if keyboard.isControlDown() then  comp.cleanUp() term.clear() os.exit() end
- 
+
 packet = serialization.serialize(results)
- 
+
 modem.broadcast(124, packet)
- 
+
 os.sleep(1)
 
 coroutine.yield()
