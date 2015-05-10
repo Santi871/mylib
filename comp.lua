@@ -11,6 +11,11 @@ local tempBool2 = false
 component.modem.open(123)
 tarRPM = 0
 
+local function round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
+
 function tableLength(h)
   local a = 0
   for _ in pairs(h) do a = a+1 end
