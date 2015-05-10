@@ -134,6 +134,8 @@ errSums = {}
 proErrors = {}
 out = {}
 curFlowDev = {}
+local lastTimes2 = {}
+local deltaTimes2 = {}
 
 function comp.turbinePID()
 
@@ -143,6 +145,8 @@ function comp.turbinePID()
     c = tableLength(turbines)
 
     for i=1, c do
+      lastTimes2[i] = computer.uptime()
+      deltaTimes2[i] = 0
     	curErrors[i] = 0
     	out[i] = 0
     	dErrs[i] = 0
@@ -159,12 +163,15 @@ function comp.turbinePID()
 
 	for i=1, c do
 
+      deltaTimes2[i] = computer.uptime() - lastTimes2[i]
+      lastTimes2[i] = computer.uptime()
+
 			curOut = component.proxy(turbines[i]).getEnergyProducedLastTick()
 			curRPM = component.proxy(turbines[i]).getRotorSpeed()
 			curErrors[i] = tarRPM-curRPM
-			proErrors[i] = 10*curErrors[i]
-			errSums[i] = errSums[i] + curErrors[i]
-			dErrs[i] = curErrors[i] - errors[i]
+			proErrors[i] = curErrors[i]
+			errSums[i] = (errSums[i] + curErrors[i])
+			dErrs[i] = (curErrors[i] - errors[i])/deltaTimes2[i]
 
 
 			if errSums[i] > 2000 then errSums[i]=2000 end
