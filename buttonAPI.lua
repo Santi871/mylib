@@ -33,8 +33,8 @@ function API.setTable(name, func, xmin, xmax, ymin, ymax)
 end
 
 function API.fill(text, color, bData)
-  local yspot = math.floor((bData["ymin"] + bData["ymax"]) /2)
-  local xspot = math.floor((bData["xmax"] + bData["xmin"] - string.len(text)) /2)+1
+  local yspot = ((bData["ymin"] + bData["ymax"]) /2)
+  local xspot = ((bData["xmax"] + bData["xmin"] - string.len(text)) /2)+1
   local oldColor = mon.setBackground(color)
   mon.fill(bData["xmin"], bData["ymin"], (bData["xmax"]-bData["xmin"]+1), (bData["ymax"]-bData["ymin"]+1), " ")
   mon.set(xspot, yspot, text)
