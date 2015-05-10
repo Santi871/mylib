@@ -165,6 +165,7 @@ function comp.turbinePID()
 
   end
 
+hello
 
 	for i=1, c do
 
