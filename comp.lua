@@ -11,7 +11,7 @@ local tempBool2 = false
 component.modem.open(123)
 tarRPM = 0
 
-local function round(num, idp)
+function round(num, idp)
   local mult = 10^(idp or 0)
   return math.floor(num * mult + 0.5) / mult
 end
@@ -174,7 +174,7 @@ function comp.turbinePID()
 			curOut = component.proxy(turbines[i]).getEnergyProducedLastTick()
 			curRPM = component.proxy(turbines[i]).getRotorSpeed()
 			curErrors[i] = tarRPM-curRPM
-			proErrors[i] = curErrors[i]
+			proErrors[i] = 10*curErrors[i]
 			errSums[i] = (errSums[i] + curErrors[i])
 			dErrs[i] = (curErrors[i] - errors[i])/deltaTimes2[i]
 
