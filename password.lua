@@ -26,7 +26,7 @@ while true do
     os.sleep(5)
     rs.setOutput(sides.right, 0)
 
-  log:close()
+    log:close()
 
   else print("Wrong password.")
 
