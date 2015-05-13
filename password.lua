@@ -1,9 +1,9 @@
 local component = require("component")
-local rs = component.redstone
 local term = require("term")
 local sides = require("sides")
 local fs = require("filesystem")
 local event = require("event")
+local rs = component.redstone
 
 term.clear()
 
