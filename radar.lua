@@ -14,7 +14,7 @@ gpu.setResolution(w/5, h/5)
 
 while true do
 
-  radarReturn = radar.getPlayers()
+  local radarReturn = radar.getPlayers()
 
   for k,v in pairs(radarReturn) do
 
