@@ -50,13 +50,22 @@ function API.screen()
   end
 end
 
-function API.toggleButton(name, table)
+function API.toggleFixedButton(name, table)
   if table~=nil then API.checkOtherButtons(table) end
-  button[name]["active"] = not button[name]["active"]
-  buttonStatus = button[name]["active"]
+  if button[name]["active"]==false then button[name]["active"] = true buttonStatus = true end
   API.screen()
   return buttonStatus
 end
+
+--ORIGINAL TOGGLE BUTTON
+
+function API.toggleButton(name)
+  button[name]["active"] = not button[name]["active"]
+  buttonStatus2 = button[name]["active"]
+  API.screen()
+  return buttonStatus2
+end
+
 
 function API.flash(name,length)
   API.toggleButton(name)
