@@ -8,7 +8,7 @@ local shell = require("shell")
 
 -------------DEFAULT SETTINGS--------------
 
-local SCAN_RATE = 5 -- scan rate in Hz (times a second) - higher scan rate requires more energy per tick
+local SCAN_RATE = 1 -- scan rate in Hz (times a second) - higher scan rate requires more energy per tick
 local REALISTIC_SCANNING_AND_BEEPING = false -- beep every time a contact is found (slows down refresh rate)
 local SHOW_DISTANCE_MARKERS = true -- show distance markers in number of blocks
 local SHOW_ALL_ENTITIES = true -- if true, will show mobs as well as players (requires more energy per tick)
