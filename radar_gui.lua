@@ -19,7 +19,7 @@ if args[1]=="help" then
   print("-Do not forcefully exit using CTRL ALT C - it will leave a registered eventhandler")
   print("-Use ARROW KEY UP and ARROW KEY DOWN to increase and decrease the scale of the Y axis respectively")
   print("-Use ARROW KEY RIGHT and ARROW KEY LEFT to increase and decrease the scale of the X axis respectively")
-  print("-It is recommended to run the program in a TIER 3 SCREEN")
+  print("-The program was designed for use with a TIER 3 SCREEN and TIER 2 RAM")
   print("-Made by Santi")
 
   os.exit()
@@ -141,6 +141,8 @@ local function updateScreen()
 
   gpu.set(2, 48, "X axis zoom: "..round(xZoom/2,1).."x")
   gpu.set(2, 49, "Y axis zoom: "..round(zZoom,1).."x")
+  local freeMemory = round(computer.freeMemory()/1000,0)
+  gpu.set(140, 49, "Free memory: "..freeMemory.." kB")
 
   gpu.setForeground(colors[MARKERS_COLOR])
 
@@ -157,7 +159,7 @@ local function keyDownListener(_, _, _, key)
     gpu.setResolution(w, h) term.clear() gpu.setForeground(0xffffff)  event.ignore("key_down", keyDownListener) running=false
   end
 
-  if event.pull(0.1, "key_down")==nil then
+  if event.pull(0.1, "key_down")==nil then -- prevents holding down arrow keys which makes it freak out
 
     if key==200 then xZoom = xZoom - 0.1 updateScreen() end
 
