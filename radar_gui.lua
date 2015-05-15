@@ -6,6 +6,17 @@ local computer = require("computer")
 local note = require("note")
 local shell = require("shell")
 
+-------------DEFAULT SETTINGS--------------
+
+local SCAN_RATE = 5 -- scan rate in Hz (times a second) - higher scan rate requires more energy per tick
+local REALISTIC_SCANNING_AND_BEEPING = false -- beep every time a contact is found (slows down refresh rate)
+local SHOW_DISTANCE_MARKERS = true -- show distance markers in number of blocks
+local SHOW_ALL_ENTITIES = true -- if true, will show mobs as well as players (requires more energy per tick)
+local MARKERS_COLOR = "cyan" -- color for the entity markers in hex
+local MARKERS_CHARACTER = "■" -- character for the entity markers
+local INVERT_X_AXIS = false
+local INVERT_Y_AXIS = false
+
 ----------------HELP SCREEN----------------
 
 local args = shell.parse(...)
@@ -24,15 +35,6 @@ if args[1]=="help" then
   os.exit()
 
 end
-
--------------DEFAULT SETTINGS--------------
-
-local SCAN_RATE = 5 -- scan rate in Hz (times a second) - higher scan rate requires more energy per tick
-local REALISTIC_SCANNING_AND_BEEPING = false -- beep every time a contact is found (slows down refresh rate)
-local SHOW_DISTANCE_MARKERS = true -- show distance markers in number of blocks
-local SHOW_ALL_ENTITIES = true -- if true, will show mobs as well as players (requires more energy per tick)
-local MARKERS_COLOR = "cyan" -- color for the entity markers in hex
-local MARKERS_CHARACTER = "■" -- character for the entity markers
 
 ----------------INTERNAL UTILITY VARIABLES AND FUNCTIONS-------------------
 
@@ -157,8 +159,33 @@ local function updateScreen()
   gpu.setForeground(colors[MARKERS_COLOR])
 
   for k,v in pairs(radarScanReturn) do
+
+    if INVERT_X_AXIS and not INVERT_Y_AXIS then
+
+     gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+
+    end
+
+    if INVERT_Y_AXIS and not INVERT_X_AXIS then
+
+     gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+
+    end
+
+    if INVERT_X_AXIS and INVERT_Y_AXIS then
+
+     gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+
+    end
+
+    if not INVERT_X_AXIS and not INVERT_Y_AXIS then
+
      gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+
+    end
+
      if REALISTIC_SCANNING_AND_BEEPING==true or REALISTIC_SCANNING_AND_BEEPING=="true" then note.play(67, 0.05) end
+
   end
 
 end
