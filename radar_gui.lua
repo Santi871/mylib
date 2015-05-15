@@ -14,8 +14,8 @@ local SHOW_DISTANCE_MARKERS = true -- show distance markers in number of blocks
 local SHOW_ALL_ENTITIES = true -- if true, will show mobs as well as players (requires more energy per tick)
 local MARKERS_COLOR = "cyan" -- color for the entity markers in hex
 local MARKERS_CHARACTER = "■" -- character for the entity markers
-local INVERT_X_AXIS = false
-local INVERT_Y_AXIS = false
+local INVERT_X_AXIS = false -- change to true to invert x axis (for calibration purposes)
+local INVERT_Y_AXIS = false -- change to true to invert y axis (for calibration purposes)
 
 ----------------HELP SCREEN----------------
 
@@ -30,6 +30,7 @@ if args[1]=="help" then
   print("-Do not forcefully exit using CTRL ALT C - it will leave a registered eventhandler")
   print("-Use ARROW KEY UP and ARROW KEY DOWN to increase and decrease the scale of the Y axis respectively")
   print("-Use ARROW KEY RIGHT and ARROW KEY LEFT to increase and decrease the scale of the X axis respectively")
+  print("-If an axis is inverted, you can easily rectify it by changing one of the INVERT AXIS parameters in the program file")
   print("-Made by Santi")
 
   os.exit()
