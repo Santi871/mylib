@@ -4,6 +4,27 @@ local keyboard = require("keyboard")
 local event = require("event")
 local computer = require("computer")
 local note = require("note")
+local shell = require("shell")
+
+----------------HELP SCREEN----------------
+
+local args = shell.parse(...)
+
+if args[1]=="help" then
+
+  print("--Radar program usage--")
+  print("-Configure the program yourself or use the default values")
+  print("-For further configuration, edit the program file")
+  print("-While the radar program is running, hold LEFT CTRL to exit")
+  print("-Do not forcefully exit using CTRL ALT C - it will leave a registered eventhandler")
+  print("-Use ARROW KEY UP and ARROW KEY DOWN to increase and decrease the scale of the Y axis respectively")
+  print("-Use ARROW KEY RIGHT and ARROW KEY LEFT to increase and decrease the scale of the X axis respectively")
+  print("-It is recommended to run the program in a TIER 3 SCREEN")
+  print("-Made by Santi")
+
+  os.exit()
+
+end
 
 -------------DEFAULT SETTINGS--------------
 
