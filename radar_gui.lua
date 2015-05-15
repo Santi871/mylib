@@ -19,7 +19,6 @@ if args[1]=="help" then
   print("-Do not forcefully exit using CTRL ALT C - it will leave a registered eventhandler")
   print("-Use ARROW KEY UP and ARROW KEY DOWN to increase and decrease the scale of the Y axis respectively")
   print("-Use ARROW KEY RIGHT and ARROW KEY LEFT to increase and decrease the scale of the X axis respectively")
-  print("-The program was designed for use with a TIER 3 SCREEN and TIER 2 RAM")
   print("-Made by Santi")
 
   os.exit()
@@ -77,6 +76,15 @@ if not component.isAvailable("radar") then
 else radar = component.radar
 end
 
+if gpu.maxDepth()<8 then
+  print("ERROR: THIS PROGRAM REQUIRES A TIER 3 SCREEN")
+  os.exit()
+end
+
+if computer.totalMemory()<393216 then
+  print("ERROR: THIS PROGRAM REQUIRES AT LEAST A TIER 2 MEMORY STICK")
+  os.exit()
+end
 -------------STARTUP PARAMETERS------------
 
 local w, h = gpu.getResolution()
@@ -90,7 +98,9 @@ gpu.setBackground(colors.black)
 --------------STARTUP SCREEN---------------
 
 term.clear()
-print("Setup screen. Skip and use default values? Y/N")
+print("Component check passed!")
+print("---Setup screen---")
+print("Skip and use default values? Y/N")
 SHOW_STARTUP_SCREEN = io.read()
 
 if SHOW_STARTUP_SCREEN=="N" or SHOW_STARTUP_SCREEN=="n" then
