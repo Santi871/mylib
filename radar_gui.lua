@@ -152,9 +152,9 @@ local function updateScreen()
   gpu.set(halfW, halfH-16*1/xZoom, "-- 16")
   gpu.set(halfW, halfH-32*1/xZoom, "-- 32")
   gpu.set(halfW, halfH-64*1/xZoom, "-- 64")
-  gpu.set(halfW, halfH+16*1/xZoom, "-- 16")
-  gpu.set(halfW, halfH+32*1/xZoom, "-- 32")
-  gpu.set(halfW, halfH+64*1/xZoom, "-- 64")
+  gpu.set(halfW, halfH+17*1/xZoom, "-- 16")
+  gpu.set(halfW, halfH+33*1/xZoom, "-- 32")
+  gpu.set(halfW, halfH+65*1/xZoom, "-- 64")
   end
 
   gpu.set(2, 48, "X axis zoom: "..round(1/(xZoom/2),1).."x")
