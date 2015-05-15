@@ -104,7 +104,7 @@ term.clear()
 print("Component check passed!")
 print("---Setup screen---")
 print("Skip and use default values? Y/N")
-SHOW_STARTUP_SCREEN = io.read()
+local SHOW_STARTUP_SCREEN = io.read()
 
 if SHOW_STARTUP_SCREEN=="N" or SHOW_STARTUP_SCREEN=="n" then
 
