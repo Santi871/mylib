@@ -126,6 +126,7 @@ if SHOW_STARTUP_SCREEN=="N" or SHOW_STARTUP_SCREEN=="n" then
   MARKERS_COLOR = io.read()
 
   print("Mark myself on the radar? - true/false")
+  MARK_MYSELF = io.read()
 
 end
 
@@ -167,35 +168,35 @@ local function updateScreen()
 
     if tostring(MARK_MYSELF)=="true" or tostring(MARK_MYSELF)=="false" and radarScanReturn[k]["name"]~=userName then
 
-    if INVERT_X_AXIS and not INVERT_Y_AXIS then
+      if INVERT_X_AXIS and not INVERT_Y_AXIS then
 
-     gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+        gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+
+      end
+
+      if INVERT_Y_AXIS and not INVERT_X_AXIS then
+
+        gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+
+      end
+
+      if INVERT_X_AXIS and INVERT_Y_AXIS then
+
+        gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+
+      end
+
+      if not INVERT_X_AXIS and not INVERT_Y_AXIS then
+
+        gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
+
+      end
+
+    if REALISTIC_SCANNING_AND_BEEPING==true or REALISTIC_SCANNING_AND_BEEPING=="true" then note.play(67, 0.05) end
 
     end
-
-    if INVERT_Y_AXIS and not INVERT_X_AXIS then
-
-     gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
-
-    end
-
-    if INVERT_X_AXIS and INVERT_Y_AXIS then
-
-     gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
-
-    end
-
-    if not INVERT_X_AXIS and not INVERT_Y_AXIS then
-
-     gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
-
-    end
-
-     if REALISTIC_SCANNING_AND_BEEPING==true or REALISTIC_SCANNING_AND_BEEPING=="true" then note.play(67, 0.05) end
 
   end
-
-end
 
 end
 
