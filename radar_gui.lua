@@ -16,6 +16,7 @@ local MARKERS_COLOR = "cyan" -- color for the entity markers in hex
 local MARKERS_CHARACTER = "■" -- character for the entity markers
 local INVERT_X_AXIS = false -- change to true to invert x axis (for calibration purposes)
 local INVERT_Y_AXIS = false -- change to true to invert y axis (for calibration purposes)
+local MARK_MYSELF = true -- set to true to prevent yourself from drawing on the screen
 
 ----------------HELP SCREEN----------------
 
@@ -96,6 +97,7 @@ local halfH = h/2
 local zZoom = 1.001 -- these two values must not be integers in order to avoid division by zero
 local xZoom = 2.001
 local running = true
+local _, _, _, _, userName = event.pull(1, "key_up")
 gpu.setBackground(colors.black)
 
 --------------STARTUP SCREEN---------------
@@ -122,6 +124,8 @@ if SHOW_STARTUP_SCREEN=="N" or SHOW_STARTUP_SCREEN=="n" then
 
   print("Set entity marker color:")
   MARKERS_COLOR = io.read()
+
+  print("Mark myself on the radar? - true/false")
 
 end
 
@@ -161,6 +165,8 @@ local function updateScreen()
 
   for k,v in pairs(radarScanReturn) do
 
+    if tostring(MARK_MYSELF)=="true" or tostring(MARK_MYSELF)=="false" and radarScanReturn[k]["name"]~=userName then
+
     if INVERT_X_AXIS and not INVERT_Y_AXIS then
 
      gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
@@ -188,6 +194,8 @@ local function updateScreen()
      if REALISTIC_SCANNING_AND_BEEPING==true or REALISTIC_SCANNING_AND_BEEPING=="true" then note.play(67, 0.05) end
 
   end
+
+end
 
 end
 
