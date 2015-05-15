@@ -16,7 +16,7 @@ local MARKERS_COLOR = "cyan" -- color for the entity markers in hex
 local MARKERS_CHARACTER = "■" -- character for the entity markers
 local INVERT_X_AXIS = false -- change to true to invert x axis (for calibration purposes)
 local INVERT_Y_AXIS = false -- change to true to invert y axis (for calibration purposes)
-local MARK_MYSELF = true -- set to true to prevent yourself from drawing on the screen
+local MARK_MYSELF = true -- set to false to prevent yourself from drawing on the screen
 
 ----------------HELP SCREEN----------------
 
