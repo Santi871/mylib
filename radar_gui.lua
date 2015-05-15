@@ -157,8 +157,8 @@ local function updateScreen()
   gpu.set(halfW, halfH+64*1/xZoom, "-- 64")
   end
 
-  gpu.set(2, 48, "X axis zoom: "..round(xZoom/2,1).."x")
-  gpu.set(2, 49, "Y axis zoom: "..round(zZoom,1).."x")
+  gpu.set(2, 48, "X axis zoom: "..round(1/(xZoom/2),1).."x")
+  gpu.set(2, 49, "Y axis zoom: "..round(1/(zZoom),1).."x")
   local freeMemory = round(computer.freeMemory()/1000,0)
   gpu.set(140, 49, "Free memory: "..freeMemory.." kB")
 
