@@ -5,7 +5,6 @@ local event = require("event")
 local computer = require("computer")
 local note = require("note")
 local shell = require("shell")
-local holo = component.hologram
 
 -------------DEFAULT SETTINGS--------------
 
@@ -79,6 +78,12 @@ if not component.isAvailable("radar") then
   print("ERROR: RADAR NOT FOUND")
   os.exit()
 else radar = component.radar
+end
+
+if not component.isAvailable("hologram") then
+  print("ERROR: HOLOGRAM PROJECTOR NOT FOUND")
+  os.exit()
+else holo = component.hologram
 end
 
 if gpu.maxDepth()<8 then
