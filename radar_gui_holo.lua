@@ -116,6 +116,7 @@ local halfW = w/2
 local halfH = h/2
 local zZoom = 1.001 -- these two values must not be integers in order to avoid division by zero
 local xZoom = 2.001
+local yOffset = 0
 local running = true
 local _, _, _, _, userName = event.pull(1, "key_up")
 gpu.setBackground(colors.black)
@@ -171,7 +172,7 @@ os.sleep(2)
 local function updateScreen()
 
   gpu.fill(1, 1, w, h, " ")
-  gpu.setForeground(0xffffff)
+  gpu.setForeground(colors.lightgray)
   gpu.set(halfW, halfH, "-- 0")
 
   if SHOW_DISTANCE_MARKERS then
@@ -190,10 +191,12 @@ local function updateScreen()
   gpu.set(halfW, halfH+65*1/xZoom, "-- 64")
   end
 
-  gpu.set(2, 48, "X axis zoom: "..round(1/(xZoom/2),1).."x")
-  gpu.set(2, 49, "Y axis zoom: "..round(1/(zZoom),1).."x")
+  gpu.set(2, 47, "X axis zoom: "..round(1/(xZoom/2),1).."x")
+  gpu.set(2, 48, "Y axis zoom: "..round(1/(zZoom),1).."x")
+  gpu.set(2, 49, "Z axis offset: "..yOffset)
   local freeMemory = round(computer.freeMemory()/1000,0)
   gpu.set(140, 49, "Free memory: "..freeMemory.." kB")
+
 
   if DISPLAY_HOLOGRAM then holo.clear()
   holo.set(24, 16, 24, 1)
@@ -203,7 +206,7 @@ local function updateScreen()
 
   for k,v in pairs(radarScanReturn) do
 
-    local y = radarScanReturn[k]["y"]
+    y = radarScanReturn[k]["y"] - yOffset
 
     if HEIGHT_COLORS then
 
@@ -276,6 +279,10 @@ local function keyDownListener(_, _, _, key)
   end
 
   if event.pull(0.1, "key_down")==nil then -- prevents holding down arrow keys which makes it freak out
+
+    if key==209 then yOffset = yOffset - 1 updateScreen() end
+
+    if key==201 then yOffset = yOffset + 1 updateScreen() end
 
     if key==200 then xZoom = xZoom - 0.1 updateScreen() end
 
