@@ -17,6 +17,9 @@ local MARKERS_CHARACTER = "■" -- character for the entity markers
 local INVERT_X_AXIS = false -- change to true to invert x axis (for calibration purposes)
 local INVERT_Y_AXIS = false -- change to true to invert y axis (for calibration purposes)
 local MARK_MYSELF = true -- set to false to prevent yourself from drawing on the screen
+local HEIGHT_COLORS = true -- set to false to disable height colors
+local DISPLAY_HOLOGRAM = false -- set to true to display hologram (requires tier 2 hologram projector)
+local HOLOGRAM_SCALE = 1 -- set hologram scale from 0.33 to 3
 
 ----------------HELP SCREEN----------------
 
@@ -33,6 +36,18 @@ if args[1]=="help" then
   print("-Use ARROW KEY RIGHT and ARROW KEY LEFT to increase and decrease the scale of the X axis respectively")
   print("-If an axis is inverted, you can easily rectify it by changing one of the INVERT AXIS parameters in the program file")
   print("-Made by Santi")
+
+  os.exit()
+
+end
+
+if args[1]=="colorcodes" then
+
+  print("Red: y<=30")
+  print("Yellow: y>30 and y<=-10")
+  print("White: y>-10 and y<=10")
+  print("Cyan: y>10 and y<=30")
+  print("Purple: y>30")
 
   os.exit()
 
@@ -81,8 +96,7 @@ else radar = component.radar
 end
 
 if not component.isAvailable("hologram") then
-  print("ERROR: HOLOGRAM PROJECTOR NOT FOUND")
-  os.exit()
+   DISPLAY_HOLOGRAM = false
 else holo = component.hologram
 end
 
@@ -105,7 +119,7 @@ local xZoom = 2.001
 local running = true
 local _, _, _, _, userName = event.pull(1, "key_up")
 gpu.setBackground(colors.black)
-holo.setScale(1)
+if component.isAvailable("hologram") then holo.setScale(HOLOGRAM_SCALE) end
 
 --------------STARTUP SCREEN---------------
 
@@ -113,27 +127,39 @@ term.clear()
 print("Component check passed!")
 print("---Setup screen---")
 print("Skip and use default values? Y/N")
-local SHOW_STARTUP_SCREEN = io.read()
+local SHOW_STARTUP_SCREEN = string.lower(io.read())
 
-if SHOW_STARTUP_SCREEN=="N" or SHOW_STARTUP_SCREEN=="n" then
+if SHOW_STARTUP_SCREEN=="n" then
 
   print("Set scan rate in Hz (times a second) - higher scan rate requires more energy per tick")
   SCAN_RATE = io.read()
 
   print("Realistic scanning and beeping? (slows down refresh rate) - true/false")
-  REALISTIC_SCANNING_AND_BEEPING = io.read()
+  REALISTIC_SCANNING_AND_BEEPING = string.lower(io.read())=="true"
 
   print("Show distance markers in number of blocks? - true/false")
-  SHOW_DISTANCE_MARKERS = io.read()
+  SHOW_DISTANCE_MARKERS = string.lower(io.read())=="true"
 
   print("Scan for mobs? - true/false")
-  SHOW_ALL_ENTITIES = io.read()
+  SHOW_ALL_ENTITIES = string.lower(io.read())=="true"
 
-  print("Set entity marker color:")
-  MARKERS_COLOR = io.read()
+  if component.isAvailable("hologram") then
+    print("Display hologram? - true/false")
+    DISPLAY_HOLOGRAM = string.lower(io.read())=="true"
+  end
+
+  print("Change marker color in function of height? - true/false")
+  HEIGHT_COLORS = string.lower(io.read())=="true"
 
   print("Mark myself on the radar? - true/false")
-  MARK_MYSELF = io.read()
+  MARK_MYSELF = string.lower(io.read())=="true"
+
+  if not HEIGHT_COLORS then
+
+  print("Set entity marker color:")
+  MARKERS_COLOR = string.lower(io.read())
+
+  end
 
 end
 
@@ -148,7 +174,7 @@ local function updateScreen()
   gpu.setForeground(0xffffff)
   gpu.set(halfW, halfH, "-- 0")
 
-  if SHOW_DISTANCE_MARKERS==true or SHOW_DISTANCE_MARKERS=="true" then
+  if SHOW_DISTANCE_MARKERS then
   gpu.set(halfW-16*1/zZoom, halfH, "¦ 16")
   gpu.set(halfW-32*1/zZoom, halfH, "¦ 32")
   gpu.set(halfW-64*1/zZoom, halfH, "¦ 64")
@@ -169,43 +195,96 @@ local function updateScreen()
   local freeMemory = round(computer.freeMemory()/1000,0)
   gpu.set(140, 49, "Free memory: "..freeMemory.." kB")
 
-  gpu.setForeground(colors[MARKERS_COLOR])
-  holo.clear()
+  if DISPLAY_HOLOGRAM then holo.clear()
   holo.set(24, 16, 24, 1)
+  end
+
+  if not HEIGHT_COLORS then gpu.setForeground(colors[MARKERS_COLOR]) end
 
   for k,v in pairs(radarScanReturn) do
 
-    if tostring(MARK_MYSELF)=="true" or tostring(MARK_MYSELF)=="false" and radarScanReturn[k]["name"]~=userName then
+    y = radarScanReturn[k]["y"]
+
+    if MARK_MYSELF or not MARK_MYSELF and radarScanReturn[k]["name"]~=userName then
 
       if INVERT_X_AXIS and not INVERT_Y_AXIS then
 
+        if HEIGHT_COLORS then
+
+          if y<=-30 then gpu.setForeground(colors.red) end
+          if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
+          if y>-10 and y<=10 then gpu.setForeground(colors.white) end
+          if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
+          if y>30 then gpu.setForeground(colors.purple) end
+
+        end
+
         gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
 
+        if DISPLAY_HOLOGRAM then
         holo.set(24 - (((radarScanReturn[k]["z"] + 32) * 48) / 64 - 24)/2, 16 + (((radarScanReturn[k]["y"] + 32) * 32) / 64 - 16)/2, 24 - (((radarScanReturn[k]["x"] + 32) * 48) / 64 - 24)/2, 2)
+        end
       end
 
       if INVERT_Y_AXIS and not INVERT_X_AXIS then
 
+        if HEIGHT_COLORS then
+
+          if y<=-30 then gpu.setForeground(colors.red) end
+          if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
+          if y>-10 and y<=10 then gpu.setForeground(colors.white) end
+          if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
+          if y>30 then gpu.setForeground(colors.purple) end
+
+        end
+
         gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
 
+        if DISPLAY_HOLOGRAM then
         holo.set(24 + (((radarScanReturn[k]["z"] + 32) * 48) / 64 - 24)/2, 16 + (((radarScanReturn[k]["y"] + 32) * 32) / 64 - 16)/2, 24 + (((radarScanReturn[k]["x"] + 32) * 48) / 64 - 24)/2, 2)
+        end
       end
 
       if INVERT_X_AXIS and INVERT_Y_AXIS then
 
+        if HEIGHT_COLORS then
+
+          if y<=-30 then gpu.setForeground(colors.red) end
+          if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
+          if y>-10 and y<=10 then gpu.setForeground(colors.white) end
+          if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
+          if y>30 then gpu.setForeground(colors.purple) end
+
+        end
+
         gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
 
+        if DISPLAY_HOLOGRAM then
         holo.set(24 - (((radarScanReturn[k]["z"] + 32) * 48) / 64 - 24)/2, 16 + (((radarScanReturn[k]["y"] + 32) * 32) / 64 - 16)/2, 24 + (((radarScanReturn[k]["x"] + 32) * 48) / 64 - 24)/2, 2)
+        end
+
       end
 
       if not INVERT_X_AXIS and not INVERT_Y_AXIS then
 
+        if HEIGHT_COLORS then
+
+          if y<=-30 then gpu.setForeground(colors.red) end
+          if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
+          if y>-10 and y<=10 then gpu.setForeground(colors.white) end
+          if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
+          if y>30 then gpu.setForeground(colors.purple) end
+
+        end
+
         gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
 
+        if DISPLAY_HOLOGRAM then
         holo.set(24 + (((radarScanReturn[k]["z"] + 32) * 48) / 64 - 24)/2, 16 + (((radarScanReturn[k]["y"] + 32) * 32) / 64 - 16)/2, 24 - (((radarScanReturn[k]["x"] + 32) * 48) / 64 - 24)/2, 2)
+        end
       end
 
-    if REALISTIC_SCANNING_AND_BEEPING==true or REALISTIC_SCANNING_AND_BEEPING=="true" then note.play(67, 0.05) end
+    if REALISTIC_SCANNING_AND_BEEPING then note.play(67, 0.05) end
 
     end
 
@@ -216,7 +295,11 @@ end
 local function keyDownListener(_, _, _, key)
 
   if key==29 then -- screen cleanup and unregister eventlistener
-    gpu.setResolution(w, h) term.clear() gpu.setForeground(0xffffff) event.ignore("key_down", keyDownListener) holo.clear() running=false
+    gpu.setResolution(w, h)
+    gpu.setForeground(0xffffff)
+    event.ignore("key_down", keyDownListener)
+    if component.isAvailable("hologram") then holo.clear() end
+    running=false
   end
 
   if event.pull(0.1, "key_down")==nil then -- prevents holding down arrow keys which makes it freak out
@@ -244,7 +327,7 @@ event.listen("key_down", keyDownListener)
 -----------------MAIN LOOP-----------------
 
 while running do
-  if SHOW_ALL_ENTITIES==true or SHOW_ALL_ENTITIES=="true" then
+  if SHOW_ALL_ENTITIES then
     radarScanReturn = radar.getEntities()
   else radarScanReturn = radar.getPlayers()
   end
@@ -253,6 +336,6 @@ while running do
   os.sleep(1/SCAN_RATE)
 end
 
-if not running then os.exit() end
+if not running then term.clear() os.exit() end
 
 --eof
