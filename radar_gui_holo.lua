@@ -203,59 +203,41 @@ local function updateScreen()
 
   for k,v in pairs(radarScanReturn) do
 
-    y = radarScanReturn[k]["y"]
+    local y = radarScanReturn[k]["y"]
+
+    if HEIGHT_COLORS then
+
+      if y<=-30 then gpu.setForeground(colors.red) end
+      if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
+      if y>-10 and y<=10 then gpu.setForeground(colors.white) end
+      if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
+      if y>30 then gpu.setForeground(colors.purple) end
+
+    end
 
     if MARK_MYSELF or not MARK_MYSELF and radarScanReturn[k]["name"]~=userName then
 
       if INVERT_X_AXIS and not INVERT_Y_AXIS then
-
-        if HEIGHT_COLORS then
-
-          if y<=-30 then gpu.setForeground(colors.red) end
-          if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
-          if y>-10 and y<=10 then gpu.setForeground(colors.white) end
-          if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
-          if y>30 then gpu.setForeground(colors.purple) end
-
-        end
 
         gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
 
         if DISPLAY_HOLOGRAM then
         holo.set(24 - (((radarScanReturn[k]["z"] + 32) * 48) / 64 - 24)/2, 16 + (((radarScanReturn[k]["y"] + 32) * 32) / 64 - 16)/2, 24 - (((radarScanReturn[k]["x"] + 32) * 48) / 64 - 24)/2, 2)
         end
+
       end
 
       if INVERT_Y_AXIS and not INVERT_X_AXIS then
-
-        if HEIGHT_COLORS then
-
-          if y<=-30 then gpu.setForeground(colors.red) end
-          if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
-          if y>-10 and y<=10 then gpu.setForeground(colors.white) end
-          if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
-          if y>30 then gpu.setForeground(colors.purple) end
-
-        end
 
         gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
 
         if DISPLAY_HOLOGRAM then
         holo.set(24 + (((radarScanReturn[k]["z"] + 32) * 48) / 64 - 24)/2, 16 + (((radarScanReturn[k]["y"] + 32) * 32) / 64 - 16)/2, 24 + (((radarScanReturn[k]["x"] + 32) * 48) / 64 - 24)/2, 2)
         end
+
       end
 
       if INVERT_X_AXIS and INVERT_Y_AXIS then
-
-        if HEIGHT_COLORS then
-
-          if y<=-30 then gpu.setForeground(colors.red) end
-          if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
-          if y>-10 and y<=10 then gpu.setForeground(colors.white) end
-          if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
-          if y>30 then gpu.setForeground(colors.purple) end
-
-        end
 
         gpu.set(halfW + radarScanReturn[k]["z"]/-zZoom, halfH - radarScanReturn[k]["x"]/-xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
 
@@ -267,21 +249,12 @@ local function updateScreen()
 
       if not INVERT_X_AXIS and not INVERT_Y_AXIS then
 
-        if HEIGHT_COLORS then
-
-          if y<=-30 then gpu.setForeground(colors.red) end
-          if y>-30 and y<=-10 then gpu.setForeground(colors.yellow) end
-          if y>-10 and y<=10 then gpu.setForeground(colors.white) end
-          if y>10 and y<=30 then gpu.setForeground(colors.cyan) end
-          if y>30 then gpu.setForeground(colors.purple) end
-
-        end
-
         gpu.set(halfW + radarScanReturn[k]["z"]/zZoom, halfH - radarScanReturn[k]["x"]/xZoom, MARKERS_CHARACTER.." "..radarScanReturn[k]["name"])
 
         if DISPLAY_HOLOGRAM then
         holo.set(24 + (((radarScanReturn[k]["z"] + 32) * 48) / 64 - 24)/2, 16 + (((radarScanReturn[k]["y"] + 32) * 32) / 64 - 16)/2, 24 - (((radarScanReturn[k]["x"] + 32) * 48) / 64 - 24)/2, 2)
         end
+
       end
 
     if REALISTIC_SCANNING_AND_BEEPING then note.play(67, 0.05) end
